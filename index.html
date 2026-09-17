@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti ❤️</title>
+    <!-- Librería para el confeti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            /* --- FONDO ARREGLADO (Centrado y ajustado) --- */
+            background: #ffffff url('Fondo1.jpg') no-repeat center center fixed; 
+            background-size: contain; /* Esto hace que quepa completa en el centro */
+            
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: #fff;
+            text-align: center;
+            position: relative;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Pantalla de inicio */
+        #pantalla-inicio button {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: #ff0055;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
+            z-index: 10;
+            position: relative;
+        }
+        #pantalla-inicio button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Contenedores oscuros para que el texto resalte */
+        #pantalla-principal, #pantalla-si, #pantalla-no {
+            background: rgba(0, 0, 0, 0.8); 
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 10; 
+            position: relative;
+            max-width: 800px;
+            margin: 20px;
+            width: 90%;
+        }
+
+        /* Título Principal RGB */
+        @keyframes rgb-text {
+            0% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+            33% { text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff; }
+            66% { text-shadow: 0 0 10px #ff8800, 0 0 20px #ff8800; }
+            100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+        }
+
+        .titulo-principal {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            animation: rgb-text 2s infinite;
+        }
+
+        /* Galería de 4 Fotos */
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes rgb-border {
+            0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+            33% { border-color: #ff00ff; box-shadow: 0 0 10px #ff00ff; }
+            66% { border-color: #ff8800; box-shadow: 0 0 10px #ff8800; }
+            100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+        }
+
+        .foto-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 15px;
+            border: 3px solid #fff;
+            animation: rgb-border 3s infinite;
+        }
+
+        /* --- FOTOS ARREGLADAS --- */
+        .foto-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain; /* ¡ESTO EVITA QUE LA FOTO 3 (O CUALQUIERA) SE RECORTE RARO! */
+            background-color: rgba(0, 0, 0, 0.3); /* Fondo oscuro suave por si la foto no llena el cuadro */
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .foto-card p {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Botones de decisión */
+        .botones-decision {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #btn-si {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        #btn-no {
+            background-color: #ff4444;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+            position: relative;
+        }
+
+        .carta {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-top: 20px;
+            white-space: pre-line;
+        }
+
+        /* Corazones y Caritas */
+        .corazon-lateral {
+            position: fixed;
+            bottom: -50px;
+            font-size: 25px;
+            animation: subirCorazon linear infinite;
+            z-index: 1; 
+            opacity: 0.8;
+            pointer-events: none; 
+        }
+
+        @keyframes subirCorazon {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.8; }
+            50% { transform: translateY(-50vh) scale(1.3) rotate(15deg); opacity: 1; }
+            100% { transform: translateY(-110vh) scale(1) rotate(-15deg); opacity: 0; }
+        }
+
+        .carita-triste {
+            position: fixed;
+            top: -50px;
+            font-size: 30px;
+            animation: caer linear infinite;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes caer {
+            to { transform: translateY(110vh); }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="musica-principal" src="cancion1.mp3" loop></audio>
+    <audio id="musica-si" src="cancion2.mp3"></audio>
+    <audio id="musica-no" src="cancion3.mp3"></audio>
+
+    <div id="pantalla-inicio">
+        <button onclick="iniciarExperiencia()">Tengo algo importante que decirte...</button>
+    </div>
+
+    <div id="pantalla-principal" class="hidden">
+        <h1 class="titulo-principal">¿Quieres estar conmigo?</h1>
+        
+        <div class="galeria">
+            <div class="foto-card">
+                <img src="foto1.jpg" alt="Foto 1">
+                <p>Desde que te conoci todo fue diferente</p>
+            </div>
+            <div class="foto-card">
+                <img src="foto2.jpg" alt="Foto 2">
+                <p>Siempre me entendiste y me cuidaste</p>
+            </div>
+            <div class="foto-card">
+                <img src="foto3.jpg" alt="Foto 3">
+                <p>Siempre pense que era el destino que me contrara contigo</p>
+            </div>
+            <div class="foto-card">
+                <img src="foto4.jpg" alt="Foto 4">
+                <p>Tu forma de ser me encanta y no dejo de pensarte</p>
+            </div>
+        </div>
+
+        <div class="botones-decision">
+            <button id="btn-si" class="btn" onclick="eligioSi()">¡Sí!</button>
+            <button id="btn-no" class="btn" onclick="eligioNo()">No</button>
+        </div>
+    </div>
+
+    <div id="pantalla-si" class="hidden">
+        <h1 class="titulo-principal">¡Sabía que dirías que sí! ❤️</h1>
+        <p class="carta">No sabes lo feliz que soy de tenerte a mi lado y nunca voy a defraudarte te quiero mucho 💖</p>
+    </div>
+
+    <div id="pantalla-no" class="hidden">
+        <h1 style="color: #ff4444; margin-bottom: 20px;">Oh... entiendo 💔</h1>
+        <div class="carta">
+            Entiendo tu desicion y se que la mlaogre yo en algunas cosas que dije y no me supe expresar bien de lo que queria
+            pero te aseguro que siempre quise tenerlo todo contigo
+            yo tambien queria que todos lo sepan si todos mis amigos o con los que me junto saben que me gustas y que estabamos 
+            siempre me cuidaste y siempre estuviste ahí para mí y eso jamas lo olvidare :c 
+            capaz solo estoy exagerando pero yo quiero tenerlo todo contigo y no quiero quedar en un tiempo pq se que despues de eso 
+            ya no vas  querer nada conmigo y te entiendo 
+            
+            Siempre te voy a querer...
+        </div>
+    </div>
+
+    <script>
+        let contadorNo = 0;
+        const mensajesNo = ["¿Estás segura?", "¿De verdad quieres darle a que no?", "¿Última oportunidad, segura?"];
+
+        const musicaPrincipal = document.getElementById('musica-principal');
+        const musicaSi = document.getElementById('musica-si');
+        const musicaNo = document.getElementById('musica-no');
+
+        function crearCorazonesLaterales() {
+            const corazon = document.createElement('div');
+            corazon.classList.add('corazon-lateral');
+            corazon.innerText = '❤️';
+            
+            const ladoIzquierdo = Math.random() > 0.5;
+            if (ladoIzquierdo) {
+                corazon.style.left = (Math.random() * 15) + 'vw';
+            } else {
+                corazon.style.left = (85 + Math.random() * 10) + 'vw';
+            }
+            
+            corazon.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            
+            document.body.appendChild(corazon);
+            setTimeout(() => { corazon.remove(); }, 7000);
+        }
+
+        setInterval(crearCorazonesLaterales, 400);
+
+        function iniciarExperiencia() {
+            document.getElementById('pantalla-inicio').classList.add('hidden');
+            document.getElementById('pantalla-principal').classList.remove('hidden');
+            musicaPrincipal.play();
+        }
+
+        function eligioSi() {
+            document.getElementById('pantalla-principal').classList.add('hidden');
+            document.getElementById('pantalla-si').classList.remove('hidden');
+            
+            musicaPrincipal.pause();
+            musicaSi.play();
+
+            const duration = 4000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff0000', '#ff69b4', '#ffffff'] });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff0000', '#ff69b4', '#ffffff'] });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+
+        function eligioNo() {
+            const btnNo = document.getElementById('btn-no');
+            const btnSi = document.getElementById('btn-si');
+
+            if (contadorNo < 3) {
+                btnNo.innerText = mensajesNo[contadorNo];
+                
+                let currentScale = parseFloat(btnSi.style.transform.replace('scale(', '').replace(')', '')) || 1;
+                btnSi.style.transform = `scale(${currentScale + 0.15})`;
+                
+                contadorNo++;
+            } else {
+                document.getElementById('pantalla-principal').classList.add('hidden');
+                document.getElementById('pantalla-no').classList.remove('hidden');
+                
+                musicaPrincipal.pause();
+                musicaNo.play();
+
+                setInterval(crearCaritaTriste, 200);
+            }
+        }
+
+        function crearCaritaTriste() {
+            const carita = document.createElement('div');
+            carita.classList.add('carita-triste');
+            carita.innerText = '😢';
+            
+            carita.style.left = Math.random() * 100 + 'vw';
+            carita.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            
+            document.body.appendChild(carita);
+            setTimeout(() => { carita.remove(); }, 4000);
+        }
+    </script>
+</body>
+</html>
